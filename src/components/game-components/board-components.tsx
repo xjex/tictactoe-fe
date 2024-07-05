@@ -1,42 +1,67 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BoardElement from "./board-element";
 import LogComponent from "./logs-component";
+import { useAppDispatch } from "@/redux/store/store";
 
+import { createMatchLog } from "@/redux/actions/match-actions";
+import { useRouter } from "next/navigation";
 interface BoardProps {
   playerX: string;
   playerO: string;
 }
 
 const BoardComponent: React.FC<BoardProps> = ({ playerX, playerO }) => {
+  const router = useRouter();
   const [elements, setElements] = useState<(string | null)[]>(
     Array(9).fill(null)
   );
   const [xIsNext, setXIsNext] = useState(true);
   const [games, setGames] = useState<{ [key: string]: string }>({});
   const [gameCount, setGameCount] = useState(1);
+  const [isEnded, setIsEnded] = useState(false);
+
+  const dispatch = useAppDispatch();
 
   const handleClick = (i: number) => {
+    if (isEnded || elements[i]) return;
+
     const newElements = elements.slice();
-    if (calculateWinner(elements) || elements[i]) {
-      return;
-    }
     newElements[i] = xIsNext ? "X" : "O";
     setElements(newElements);
     setXIsNext(!xIsNext);
   };
 
+  useEffect(() => {
+    const winner = calculateWinner(elements);
+    const isDraw = elements.every((element) => element !== null) && !winner;
+
+    if (winner || isDraw) {
+      checkStatus();
+      setIsEnded(true);
+    }
+  }, [elements]);
+
+  const handleStop = () => {
+    dispatch(
+      createMatchLog({
+        playerX: playerX,
+        playerO: playerO,
+        games: games,
+      })
+    );
+
+    router.push("/");
+  };
   const handleReset = () => {
     setElements(Array(9).fill(null));
+    setIsEnded(false);
     setXIsNext(true);
   };
 
   const handleNextGame = () => {
     const winner = calculateWinner(elements);
     if (winner || elements.every((element) => element !== null)) {
-      const gameResult = winner ? (winner === "X" ? playerX : playerO) : "Draw";
-      setGames({ ...games, [`Game ${gameCount}`]: gameResult });
-      setGameCount(gameCount + 1);
       handleReset();
     }
   };
@@ -64,6 +89,19 @@ const BoardComponent: React.FC<BoardProps> = ({ playerX, playerO }) => {
 
   const winner = calculateWinner(elements);
   const isDraw = elements.every((element) => element !== null) && !winner;
+  const checkStatus = () => {
+    const status = winner
+      ? `Winner: ${winner === "X" ? playerX : playerO}`
+      : isDraw;
+
+    if (winner || elements.every((element) => element !== null)) {
+      const gameResult = winner ? (winner === "X" ? playerX : playerO) : "Draw";
+      setGames({ ...games, [`${gameCount}`]: gameResult });
+      setGameCount(gameCount + 1);
+    }
+    return status;
+  };
+
   const status = winner
     ? `Winner: ${winner === "X" ? playerX : playerO}`
     : isDraw
@@ -74,20 +112,23 @@ const BoardComponent: React.FC<BoardProps> = ({ playerX, playerO }) => {
     <div className="flex flex-col items-center">
       <div className="mb-4 text-xl">{status}</div>
       {renderBoard()}
-      <div className="flex items-center mb-10">
-        <button
-          onClick={handleNextGame}
-          className="mt-4 p-2 bg-green-500 text-white rounded mr-4"
-        >
-          Next Game
-        </button>
-        <button
-          onClick={handleReset}
-          className="mt-4 p-2 bg-red-500 text-white rounded"
-        >
-          Stop
-        </button>
-      </div>
+      <span className="mb-5"></span>
+      {isEnded && (
+        <div className="flex items-center mb-10">
+          <button
+            onClick={handleNextGame}
+            className="mt-4 p-2 bg-green-500 text-white rounded mr-4"
+          >
+            Next Game
+          </button>
+          <button
+            onClick={handleStop}
+            className="mt-4 p-2 bg-red-500 text-white rounded"
+          >
+            Stop
+          </button>
+        </div>
+      )}
       <LogComponent playerX={playerX} playerO={playerO} games={games} />
     </div>
   );

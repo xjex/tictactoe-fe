@@ -25,7 +25,7 @@ const LogComponent: React.FC<LogComponentProps> = ({
         <ul>
           {Object.entries(games).map(([game, result], index) => (
             <li key={index}>
-              {game}: {result}
+              Game {game}: {result}
             </li>
           ))}
         </ul>

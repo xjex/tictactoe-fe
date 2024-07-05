@@ -3,7 +3,7 @@ import Link from "next/link";
 const Navigationcomponent = () => {
   return (
     <nav className="bg-gray-900 text-white p-4">
-      <ul className="flex space-x-4">
+      <ul className="flex space-x-4 justify-center">
         <Link href="/">
           <li className="border hover:bg-gray-700 p-2 rounded-md transition duration-300 ease-in-out ">
             Home
@@ -14,7 +14,7 @@ const Navigationcomponent = () => {
             Game
           </li>
         </Link>
-        <Link href="/matchlist">
+        <Link href="/scoreboard">
           <li className="border hover:bg-gray-700 p-2 rounded-md transition duration-300 ease-in-out ">
             Scoreboard
           </li>

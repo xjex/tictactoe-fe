@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigationcomponent from "@/components/navigations/navigation-components";
-
+import StoreProvider from "@/redux/store/storeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,7 +19,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Navigationcomponent />
-        {children}
+
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
   );
