@@ -21,7 +21,7 @@ const Board = () => {
     <div className="flex flex-col items-center mt-10">
       {playerX && playerO ? (
         <>
-          <span className="text-3xl  font-bold m-10">
+          <span className="text-3xl  font-bold m-2">
             {playerX} vs {playerO}
           </span>
 

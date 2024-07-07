@@ -21,11 +21,13 @@ const matchSlice = createSlice({
       state.isError = false;
     });
     builder.addCase(getMatchLogs.pending, (state) => {
+      state.isError = false;
       state.isLoading = true;
     });
 
     builder.addCase(getMatchLogs.rejected, (state) => {
       state.isError = true;
+      state.isLoading = false;
     });
   },
 });

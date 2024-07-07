@@ -12,7 +12,7 @@ export const getMatchLogs = createAsyncThunk("matches/Logs", async () => {
 });
 
 export const createMatchLog = createAsyncThunk(
-  "admin/createNewUser",
+  "matches/createLog",
   async (payload: SetLogEntry) => {
     try {
       const res = await post(`/api/savelog`, payload);
